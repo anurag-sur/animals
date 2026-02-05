@@ -1,0 +1,11 @@
+Model Information:
+* title:	Custom - Cheetah
+* source:	https://sketchfab.com/3d-models/custom-cheetah-45dd873cc0b84837a441eb34abaeef64
+* author:	Otherspectre (https://sketchfab.com/Otherspectre)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Custom - Cheetah" (https://sketchfab.com/3d-models/custom-cheetah-45dd873cc0b84837a441eb34abaeef64) by Otherspectre (https://sketchfab.com/Otherspectre) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
