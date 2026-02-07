@@ -4,72 +4,457 @@
 <meta charset="utf-8">
 <title>AR Animals</title>
 <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-body{margin:0;overflow:hidden;font-family:sans-serif;background:#e8e4e1}
-#name{position:absolute;top:30px;left:50%;transform:translateX(-50%);font-size:28px;font-weight:bold;z-index:5}
-#controls{position:absolute;bottom:30px;left:0;right:0;display:flex;justify-content:center;gap:20px;z-index:5}
-button{width:60px;height:60px;border-radius:50%;border:none;background:#333;color:#fff;font-size:20px;cursor:pointer}
-#loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#e8e4e1;z-index:100}
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  background: #e8e4e1;
+  color: #2d2d2d;
+}
+
+/* Top Bar */
+#topBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 20px;
+  background: linear-gradient(180deg, rgba(0,0,0,.6) 0%, transparent 100%);
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#logo {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: white;
+}
+
+/* Info Card */
+#infoCard {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 320px;
+  padding: 12px 16px;
+  background: rgba(20,20,22,.92);
+  backdrop-filter: blur(20px);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.08);
+  z-index: 5;
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
+}
+
+#animalName {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 4px;
+}
+
+#animalStats {
+  display: flex;
+  gap: 10px;
+  font-size: 11px;
+  color: rgba(255,255,255,.5);
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Quick Actions */
+#quickActions {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 5;
+}
+
+.quick-btn {
+  width: 48px;
+  height: 48px;
+  background: rgba(30,30,32,.88);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 50%;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.quick-btn:active {
+  transform: scale(.95);
+  background: rgba(50,50,55,.9);
+}
+
+.quick-btn.active {
+  background: rgba(31,122,255,.85);
+  border-color: rgba(31,122,255,.3);
+  box-shadow: 0 4px 16px rgba(31,122,255,.3);
+}
+
+/* Main Controls */
+#controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  background: linear-gradient(0deg, rgba(0,0,0,.7) 0%, transparent 100%);
+  z-index: 5;
+}
+
+#navButtons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.nav-btn {
+  width: 56px;
+  height: 56px;
+  background: rgba(30,30,32,.9);
+  border: 1px solid rgba(255,255,255,.12);
+  color: white;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.nav-btn:active {
+  transform: scale(.94);
+  background: rgba(50,50,55,.95);
+}
+
+/* Toast */
+#toast {
+  position: absolute;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(31,122,255,.95);
+  backdrop-filter: blur(20px);
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity .3s;
+  z-index: 101;
+  box-shadow: 0 4px 20px rgba(31,122,255,.4);
+  color: white;
+}
+
+/* Loading */
+#loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #e8e4e1;
+  z-index: 102;
+  gap: 16px;
+}
+
+#loadingText {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2d2d2d;
+}
+
+#loadingBar {
+  width: 200px;
+  height: 4px;
+  background: rgba(0,0,0,.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+#loadingProgress {
+  height: 100%;
+  background: linear-gradient(90deg, #1f7aff, #0066ff);
+  width: 0%;
+  transition: width .3s;
+}
+
+a-scene {
+  pointer-events: none;
+}
+
+#topBar,
+#infoCard,
+#toast,
+#controls,
+#quickActions,
+.nav-btn,
+.quick-btn {
+  pointer-events: auto;
+}
 </style>
 </head>
 <body>
 
-<div id="loading">Loading...</div>
-
-<div id="name"></div>
-
-<div id="controls">
-  <button id="prev">‹</button>
-  <button id="next">›</button>
+<!-- Top Bar -->
+<div id="topBar">
+  <div id="logo">🦁 WildAR</div>
 </div>
 
-<a-scene vr-mode-ui="enabled:false" background="color:#e8e4e1">
+<!-- Info Card -->
+<div id="infoCard">
+  <div id="animalName"></div>
+  <div id="animalStats">
+    <span class="stat">👁️ <span id="viewCount">0</span> views</span>
+    <span class="stat">⭐ <span id="avgRating">0.0</span></span>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="loading">
+  <div id="loadingText">Initializing…</div>
+  <div id="loadingBar">
+    <div id="loadingProgress"></div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div id="quickActions">
+  <button class="quick-btn" id="resetBtn">🔄</button>
+  <button class="quick-btn active" id="toggleRotate">↻</button>
+</div>
+
+<!-- Main Controls -->
+<div id="controls">
+  <div id="navButtons">
+    <button class="nav-btn" id="left">‹</button>
+    <button class="nav-btn" id="right">›</button>
+  </div>
+</div>
+
+<a-scene vr-mode-ui="enabled:false" background="color: #e8e4e1">
   <a-entity light="type:ambient;intensity:0.8"></a-entity>
   <a-entity light="type:directional;intensity:0.4" position="1 2 1"></a-entity>
-  <a-entity camera look-controls="enabled:false"></a-entity>
-  <a-entity id="holder" position="0 0 -4"></a-entity>
+  <a-entity camera look-controls="enabled: false" position="0 0 0"></a-entity>
+  <a-entity id="holder" position="0 0 -5"></a-entity>
 </a-scene>
 
 <script>
-const animals=[
-  {model:"models/cheetah/scene.gltf",name:"Cheetah",scale:1.2},
-  {model:"models/rabbit/scene.gltf",name:"Rabbit",scale:0.8},
-  {model:"models/eagle/scene.gltf",name:"Eagle",scale:1.5},
-  {model:"models/wolf/scene.gltf",name:"Wolf",scale:0.6},
-  {model:"models/penguin/scene.gltf",name:"Penguin",scale:1.2},
-  {model:"models/tiger/scene.gltf",name:"Tiger",scale:1.1}
+const animals = [
+  {model: "models/lion/scene.gltf", name: "Lion", scale: 1.2, views: 8900, rating: 4.9},
+  {model: "models/elephant/scene.gltf", name: "Elephant", scale: 0.8, views: 7600, rating: 4.8},
+  {model: "models/eagle/scene.gltf", name: "Eagle", scale: 1.5, views: 4200, rating: 4.6},
+  {model: "models/shark/scene.gltf", name: "Shark", scale: 0.6, views: 5600, rating: 4.7},
+  {model: "models/panda/scene.gltf", name: "Panda", scale: 1, views: 9200, rating: 4.9},
+  {model: "models/penguin/scene.gltf", name: "Penguin", scale: 1.2, views: 3400, rating: 4.5},
+  {model: "models/tiger/scene.gltf", name: "Tiger", scale: 1.1, views: 8100, rating: 4.8},
+  {model: "models/dolphin/scene.gltf", name: "Dolphin", scale: 0.9, views: 4800, rating: 4.7},
+  {model: "models/owl/scene.gltf", name: "Owl", scale: 1.3, views: 2900, rating: 4.4}
 ];
 
-let index=0;
-const holder=document.getElementById("holder");
-const models=[];
+const holder = document.getElementById("holder");
+const animalName = document.getElementById("animalName");
+const viewCount = document.getElementById("viewCount");
+const avgRating = document.getElementById("avgRating");
+const loading = document.getElementById("loading");
+const loadingText = document.getElementById("loadingText");
+const loadingProgress = document.getElementById("loadingProgress");
+const toast = document.getElementById("toast");
 
-function show(i){
-  models.forEach((m,j)=>m.object3D.visible=j===i);
-  document.getElementById("name").textContent=animals[i].name;
+let index = 0;
+let yaw = 0, pitch = 0, scale = animals[0].scale;
+let autoRotate = true;
+
+const models = [];
+let loadedCount = 0;
+
+function showToast(t) {
+  toast.textContent = t;
+  toast.style.opacity = 1;
+  setTimeout(() => toast.style.opacity = 0, 1800);
 }
 
-animals.forEach((a,i)=>{
-  const m=document.createElement("a-entity");
-  m.setAttribute("gltf-model",a.model);
-  m.object3D.scale.set(a.scale,a.scale,a.scale);
-  m.object3D.visible=false;
+function updateRotateBtn() {
+  const btn = document.getElementById("toggleRotate");
+  if (autoRotate) {
+    btn.classList.add("active");
+  } else {
+    btn.classList.remove("active");
+  }
+}
+
+/* Preload all models */
+animals.forEach((animal, i) => {
+  const m = document.createElement("a-entity");
+  m.setAttribute("gltf-model", animal.model);
+  m.object3D.scale.set(animal.scale, animal.scale, animal.scale);
+  m.object3D.visible = false;
   holder.appendChild(m);
   models.push(m);
-  m.addEventListener("model-loaded",()=>{
-    if(i===0)document.getElementById("loading").style.display="none";
-    if(i===0)show(0);
+
+  m.addEventListener("model-loaded", () => {
+    loadedCount++;
+    const progress = (loadedCount / animals.length) * 100;
+    loadingProgress.style.width = progress + "%";
+    loadingText.textContent = `Loaded ${animal.name} (${loadedCount}/${animals.length})`;
+    if (loadedCount === animals.length) {
+      setTimeout(() => {
+        loading.style.display = "none";
+        showAnimal(0);
+        showToast("Welcome to WildAR! 🦁");
+      }, 300);
+    }
   });
 });
 
-document.getElementById("prev").onclick=()=>{index=(index-1+animals.length)%animals.length;show(index)};
-document.getElementById("next").onclick=()=>{index=(index+1)%animals.length;show(index)};
+function showAnimal(i) {
+  models.forEach((m, idx) => {
+    m.object3D.visible = (idx === i);
+  });
+  scale = animals[i].scale;
+  models[i].object3D.scale.set(scale, scale, scale);
+  yaw = pitch = 0;
+  models[i].object3D.rotation.set(0, 0, 0);
 
-let yaw=0;
-AFRAME.registerComponent("spin",{tick:function(){
-  if(models[index]){yaw+=0.005;models[index].object3D.rotation.y=yaw}
-}});
-holder.setAttribute("spin","");
+  const animal = animals[i];
+  animalName.textContent = animal.name;
+  viewCount.textContent = animal.views;
+  avgRating.textContent = animal.rating.toFixed(1);
+
+  autoRotate = true;
+  updateRotateBtn();
+}
+
+function resetView() {
+  if (!models[index]) return;
+  scale = animals[index].scale;
+  models[index].object3D.scale.set(scale, scale, scale);
+  yaw = pitch = 0;
+  models[index].object3D.rotation.set(0, 0, 0);
+  autoRotate = true;
+  updateRotateBtn();
+  showToast("View reset 🔄");
+}
+
+function toggleAutoRotate() {
+  autoRotate = !autoRotate;
+  updateRotateBtn();
+  showToast(autoRotate ? "Auto-rotate ON ↻" : "Auto-rotate OFF");
+}
+
+/* UI */
+document.getElementById("left").onclick = () => { index = (index + animals.length - 1) % animals.length; showAnimal(index); };
+document.getElementById("right").onclick = () => { index = (index + 1) % animals.length; showAnimal(index); };
+document.getElementById("resetBtn").onclick = resetView;
+document.getElementById("toggleRotate").onclick = toggleAutoRotate;
+
+/* Input (Touch + Mouse) */
+let dragging = false, lx = 0, ly = 0, zoom = 0;
+
+function dist(a, b) {
+  const dx = a.clientX - b.clientX;
+  const dy = a.clientY - b.clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function start(x, y, e) {
+  if (e && e.target && (
+    e.target.classList.contains('nav-btn') ||
+    e.target.classList.contains('quick-btn')
+  )) return;
+
+  dragging = true; lx = x; ly = y; autoRotate = false;
+  updateRotateBtn();
+}
+
+function move(x, y) {
+  if (!models[index]) return;
+  yaw += (x - lx) * 0.01;
+  pitch += (y - ly) * 0.01;
+  pitch = Math.max(-1.4, Math.min(1.4, pitch));
+  lx = x; ly = y;
+  models[index].object3D.rotation.set(pitch, yaw, 0);
+}
+
+function end() {
+  dragging = false;
+  setTimeout(() => {
+    autoRotate = true;
+    updateRotateBtn();
+  }, 2000);
+}
+
+document.addEventListener("touchstart", e => {
+  if (e.touches.length === 1) start(e.touches[0].clientX, e.touches[0].clientY, e);
+  if (e.touches.length === 2) zoom = dist(e.touches[0], e.touches[1]);
+});
+
+document.addEventListener("touchmove", e => {
+  if (e.touches.length === 2) {
+    const d = dist(e.touches[0], e.touches[1]);
+    if (models[index]) {
+      scale *= d / zoom;
+      models[index].object3D.scale.set(scale, scale, scale);
+    }
+    zoom = d;
+  }
+  if (dragging && e.touches.length === 1)
+    move(e.touches[0].clientX, e.touches[0].clientY);
+});
+
+document.addEventListener("touchend", end);
+
+document.addEventListener("mousedown", e => start(e.clientX, e.clientY, e));
+document.addEventListener("mousemove", e => dragging && move(e.clientX, e.clientY));
+document.addEventListener("mouseup", end);
+
+document.addEventListener("wheel", e => {
+  if (e.target.classList.contains('nav-btn') ||
+    e.target.classList.contains('quick-btn')) return;
+
+  if (!models[index]) return;
+
+  scale += e.deltaY * -0.001;
+  models[index].object3D.scale.set(scale, scale, scale);
+});
+
+AFRAME.registerComponent("spin", {
+  tick: function () {
+    if (autoRotate && models[index]) {
+      yaw += 0.002;
+      models[index].object3D.rotation.y = yaw;
+    }
+  }
+});
+holder.setAttribute("spin", "");
 </script>
 
 </body>
