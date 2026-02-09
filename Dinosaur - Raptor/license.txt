@@ -1,0 +1,11 @@
+Model Information:
+* title:	Raptor dinosaur indoraptor
+* source:	https://sketchfab.com/3d-models/raptor-dinosaur-indoraptor-042475839bd84ed29d6b048c63df3cd2
+* author:	victory_ (https://sketchfab.com/victory_)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Raptor dinosaur indoraptor" (https://sketchfab.com/3d-models/raptor-dinosaur-indoraptor-042475839bd84ed29d6b048c63df3cd2) by victory_ (https://sketchfab.com/victory_) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
